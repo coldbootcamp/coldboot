@@ -1,0 +1,73 @@
+In this implementation we have implmented only the
+AES encryption routines that use CBC. The decryption
+routines and encryption/decryption routines using
+other modes have been left to be future work.
+
+Design issues:
+For using AES to hash the data, we need to setup a key for
+the AES encryption. 14 rounds are used to encrypt a block
+when using AES encryption with 256 bit keys. We need to
+hash x, x+1, x+2, x+3, ... x+13 (one for each round)
+depending on the round that is being performed. Now the
+question is, should we setup one key for each hash, or use
+the same key for all hash functions?
+
+To Do:
+1. Import software implementation of aes key expansion.
+
+
+At initialization setup keys for hashing:
+Either one key schedule and IV for all hashes or 14 different key
+schedules and IVs - one for each round.
+May be try with one key schedule and IV and see what the output
+looks like.
+1. Generate key schedules for all 14 keys.
+2. Generate IVs for all 14 rounds
+
+Pseudocode for AES hash function:
+1. Get x.
+2. Add the round index to x.
+3. Get key schedule address into register
+4. Get IV into xmm register
+5. Encrypt the value of (x+ round index) with hashing key and IV
+using CBC mode.
+6. xor the resulting value with (x + round index).
+
+Implement the assembly code such that registers other than xmm1 and
+xmm2 are used because xmm1 and xmm2 are being used in the aes_cbc
+routine.
+
+x - xmm1
+round index - some other register
+x + round index - xmm1
+mv xmm1, xmm2
+
+Changes to cbc.s in AES_CBC_encrypt
+1. Move the key being used in aesenc instruction into
+xmm register (xmm3).
+2. call aeshash -- may require saving some registers and restoring
+them (may be implement it as a macro)
+3. Simplify the call to AES_encrypt_cbc by breaking it up into 128, 192
+or 256 bit operations -- will save the checking of counter and then looping
+
+aeshash implementation: (only needs index as argument)
+Use C calling conventions for argument passing - put index into rdi (first
+argument) --> save rdi in implementation of cbc encryption
+1. May be save some registers (does not seem necessary as we can just use
+other xmm registers)
+2. Get x from memory for now (later get from debug register)
+3. Get round index in another register and add to x.
+4. Get key schedule address into one register.
+5. Get IV into another register.
+6. Copy the implementation of CBC and put into the function - use only 10
+rounds for encryption.
+7. xor resulting value with initial value.
+
+Functions left to implement:
+1. AES key generation
+2. AES key expansion
+3. AES hash function
+4. AES encrypt using CBC
+
+First implement all the C code. Then worry about the assembly code because a
+lot of the assembly code depends on the C code.

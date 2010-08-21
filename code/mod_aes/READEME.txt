@@ -1,0 +1,8 @@
+mod_aes/: This directory contains the kernel module which we tried to generate during the final presentation.
+
+The transformation functions are not the latest one.
+
+This should be used only for checking whether we are able to compile a kernel module or not.
+
+-Shishir
+

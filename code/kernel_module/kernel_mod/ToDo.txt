@@ -1,0 +1,28 @@
+Design of the kernel module:
+
+On initialization, the kernel module generates a random 128-bit AES key
+that is used for the hash function for the session. It also generates the
+corresponding key schedule which is placed in a global variable.
+
+The kernel also has a map for managing key schedules for applications.
+When an application passes a key to the kernel module, the kernel module
+generates the corresponding key schedule and stores it in its map. The map
+must also contain a pointer to the decryption key schedule. The key chosen
+for the map identifies the application uniquely. This identifier is
+returned to the application and is used to identify the key that must be
+used to encrypt/decrypt data at a later stage.
+
+
+Deployment vision:
+A kernel module that encrypt/decrypts and manages keys for applications
+
+A kernel module that intercepts all read/write() calls to the disk and
+performs full disk encryption/decryption. In such a case, there will be
+no interface to the application.
+
+Write in README
+Create a node using mknod in the /dev folder with the device major number
+and minor number and of type character device
+
+Remove this when you are done with the program. -- write a wrapper around
+insmod and rmmod
