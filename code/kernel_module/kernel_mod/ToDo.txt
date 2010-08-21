@@ -1,4 +1,4 @@
-Design of the kernel module:
+ Design of the kernel module:
 
 On initialization, the kernel module generates a random 128-bit AES key
 that is used for the hash function for the session. It also generates the
