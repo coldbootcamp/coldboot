@@ -50,6 +50,7 @@ static void set_decrypt_key(ioctl_set_key_t *ioctl_key);
 void print_m128i_with_string(char* string,__m128i data);
 void print_m128i_with_string_short(char* string,__m128i data,int length);
 void print_X(char *buf, char *comment);
+static void print16(char *key);
 
 //-----------------------------------------------------------------
 
@@ -214,7 +215,9 @@ static void set_encrypt_key(ioctl_set_key_t *ioctl_key) {
   // we are not using dynamic size to avoid using malloc.
   char user_key[16];
 
-  int ret_val = copy_from_user((void *)(ioctl_key->user_key), (void *)(user_key), 16);
+  print16(ioctl_key->user_key);
+  int ret_val = copy_from_user((void *)(user_key), 
+			       (void *)(ioctl_key->user_key), 16);
   //sizeof(ioctl_set_key_t));
   if(ret_val != -1)
     printk(KERN_ALERT "ret_val = %d ioctl_key = 0x%p\n", ret_val,
@@ -228,7 +231,11 @@ static void set_encrypt_key(ioctl_set_key_t *ioctl_key) {
 
   /* Generate the key schedule for the key provided by the application   
      expand the aes key */
-  AES_set_encrypt_key(user_key, ioctl_key->user_key_size, &local_key_sched_buf);
+  print16(user_key);
+  printk(KERN_ALERT "key_size = %d", ioctl_key->user_key_size);
+  AES_set_encrypt_key(ioctl_key->user_key, ioctl_key->user_key_size, &local_key_sched_buf);
+  //printk(KERN_ALERT "a = %d", a);
+  printk(KERN_ALERT "Here");
 
   /* Transform the key schedule */ 
   AES_transform_key(local_key_sched_buf.key, local_key_sched_buf.nr);
@@ -238,6 +245,12 @@ static void set_encrypt_key(ioctl_set_key_t *ioctl_key) {
 	       sizeof(key_schedule_t));
 }
 
+
+static void print16(char *key) {
+  int i;
+  for (i=0; i < 16; i++)
+    printk(KERN_ALERT "0x%02x ", key[i]);
+}
 
 /* Helper function which expands the decrypt key,
 // transforms the key and set the tranformed key
