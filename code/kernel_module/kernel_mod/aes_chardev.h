@@ -21,16 +21,22 @@
 /* 
  * Sets the key that the user passes into the kernel
  */
-#define IOCTL_SET_ENCRYPT_KEY _IOR(MAJOR_NUM, 0, char *)
+#define IOCTL_SET_ENCRYPT_KEY _IOR(MAJOR_NUM, 0, void *)
+
+/* 
+ * Sets the key that the user passes into the kernel
+ */
+#define IOCTL_SET_DECRYPT_KEY _IOR(MAJOR_NUM, 1, void *)
+
 /* 
  * Encrypt data with the key that was provided earlier
  */
-#define IOCTL_ENCRYPT_DATA _IOWR(MAJOR_NUM, 1, char *)
+#define IOCTL_ENCRYPT_DATA _IOWR(MAJOR_NUM, 2, void *)
 
 /* 
  * Decrypt data with the key that was provided earlier
  */
-#define IOCTL_DECRYPT_DATA _IOWR(MAJOR_NUM, 2, char *)
+#define IOCTL_DECRYPT_DATA _IOWR(MAJOR_NUM, 3, void *)
 
 /* 
  * The name of the device file 

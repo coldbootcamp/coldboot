@@ -7,7 +7,7 @@ length specific key expansion functions
 
 #include "aes_key_struct.h"
 
-int AES_set_encrypt_key (const unsigned char *userKey,
+int AES_set_encrypt_key (const char *userKey,
                          const int bits,
                          key_schedule_t *key)
 {
@@ -31,11 +31,11 @@ int AES_set_encrypt_key (const unsigned char *userKey,
   return -2;
 }
 
-int AES_set_decrypt_key (const unsigned char *userKey,
+int AES_set_decrypt_key (const char *userKey,
                          const int bits,
                          key_schedule_t *key)
 {
-  int i,nr;;
+  int nr;
   key_schedule_t temp_key;
   __m128i *Key_Schedule = (__m128i*)key->key;
   __m128i *Temp_Key_Schedule = (__m128i*)temp_key.key;
